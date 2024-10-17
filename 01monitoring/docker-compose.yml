@@ -1,0 +1,50 @@
+services:
+  influxdb:
+    image: influxdb
+    container_name: influxdb
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    env_file:
+      - 'env.influxdb'
+    volumes:
+      - data_influxdb:/var/lib/influxdb2
+      - config_influxdb:/etc/influxdb2/
+    networks:
+      - common
+
+  telegraf:
+    image: telegraf
+    container_name: telegraf
+    restart: unless-stopped
+    hostname: "domo-01"
+    user: telegraf:997
+    env_file:
+      - 'env.telegraf'
+    volumes:
+      - /:/hostfs:ro
+      - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - common
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    user: '0'
+    volumes:
+      - data_grafana:/var/lib/grafana
+    networks:
+      - common
+
+volumes:
+  config_influxdb:
+  data_influxdb:
+  data_grafana:
+
+networks:
+  common:
+    name: common

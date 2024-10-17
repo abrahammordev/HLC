@@ -1,0 +1,24 @@
+
+version: "3"
+services:
+  heimdall:
+    image: lscr.io/linuxserver/heimdall:2.5.6
+    container_name: heimdall
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Brussels
+    volumes:
+      - config_heimdall:/config
+    ports:
+      - 88:80
+    networks:
+      - common
+
+volumes:
+  config_heimdall:
+
+networks:
+  common:
+    name: common
